@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blog Saya</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        .post { margin-bottom: 30px; border-bottom: 1px solid #ccc; padding-bottom: 20px; }
+        h2 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Selamat Datang di Blog Saya!</h1>
+
+    {% for post in semua_post %}
+        <div class="post">
+            <h2>{{ post.judul }}</h2>
+            <p>{{ post.konten }}</p>
+            <small>Dipublikasikan pada: {{ post.tanggal_publikasi }}</small>
+        </div>
+    {% endfor %}
+</body>
+</html>

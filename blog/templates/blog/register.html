@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi - Electronicku</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary-blue:#007bff;--dark-blue:#0056b3;--light-gray:#f8f9fa;--medium-gray:#dee2e6;--dark-gray:#343a40;--success-green:#28a745;--danger-red:#dc3545;}body{font-family:'Roboto',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background-color:var(--light-gray);margin:0;}.auth-container{background:white;padding:40px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:350px;text-align:center;}.auth-container h1{color:var(--dark-gray);margin-bottom:10px;font-weight:500;}.auth-container p{color:#6c757d;margin-bottom:30px;}.form-group{text-align:left;margin-bottom:20px;}.form-group label{display:block;margin-bottom:5px;color:var(--dark-gray);font-weight:500;}.form-group input{width:100%;padding:12px;border:1px solid var(--medium-gray);border-radius:8px;box-sizing:border-box;transition:border-color .2s;}.form-group input:focus{outline:none;border-color:var(--primary-blue);}.btn-submit{width:100%;padding:12px;background-color:var(--primary-blue);color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:500;transition:background-color .2s;}.btn-submit:hover{background-color:var(--dark-blue);}.auth-switch-link{margin-top:25px;color:#6c757d;}.auth-switch-link a{color:var(--primary-blue);text-decoration:none;font-weight:500;}.auth-switch-link a:hover{text-decoration:underline;} .form-error { list-style: none; padding: 0; color: var(--danger-red); font-size: 0.9em; text-align: left; margin-top: -10px; margin-bottom: 10px;}
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Buat Akun Baru</h1>
+        <p>Gabung dengan Electronicku</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: #6c757d">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn-submit">Daftar</button>
+        </form>
+
+        <div class="auth-switch-link">
+            Sudah punya akun? <a href="{% url 'login' %}">Login di sini</a>
+        </div>
+    </div>
+</body>
+</html>
