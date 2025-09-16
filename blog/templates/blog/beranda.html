@@ -1,4 +1,5 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -10,57 +11,146 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
     <style>
-        :root{--primary-blue:#007bff;--dark-blue:#0056b3;--light-gray:#f8f9fa;--medium-gray:#dee2e6;--dark-gray:#343a40;}body{font-family:'Roboto',sans-serif;background-color:var(--light-gray);margin:0;}.navbar{background-color:#fff;padding:15px 40px;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;}.navbar-brand{font-size:1.5em;font-weight:700;color:var(--primary-blue);text-decoration:none;}.navbar-user{display:flex;align-items:center;}.navbar-user span{margin-right:20px;color:var(--dark-gray);}.btn-logout{padding:8px 15px;background-color:#dc3545;color:white;text-decoration:none;border-radius:8px;font-weight:500;transition:background-color .2s;border:none;cursor:pointer;font-family:'Roboto',sans-serif;font-size:1em;}.btn-logout:hover{background-color:#c82333;}.container{padding:40px;max-width:1200px;margin:auto;}.container h1{color:var(--dark-gray);margin-bottom:30px;}.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px;}.product-card{background-color:white;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.08);overflow:hidden;transition:transform .2s,box-shadow .2s;}.product-card:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.12);}.product-card img{width:100%;height:200px;object-fit:cover;}.product-info{padding:20px;}.product-info h3{margin-top:0;color:var(--dark-gray);}.product-info p{font-size:1.2em;font-weight:500;color:var(--primary-blue);}
+        :root{--primary-blue:#007bff;--dark-blue:#0056b3;--light-gray:#f8f9fa;--medium-gray:#dee2e6;--dark-gray:#343a40;}body{font-family:'Roboto',sans-serif;background-color:var(--light-gray);margin:0;}.navbar{background-color:#fff;padding:15px 40px;box-shadow:0 2px 4px rgba(0,0,0,0.1);display:flex;justify-content:space-between;align-items:center;}.navbar-brand{font-size:1.5em;font-weight:700;color:var(--primary-blue);text-decoration:none;}.navbar-user{display:flex;align-items:center;}
+        
+        /* CSS BARU UNTUK DROPDOWN */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 10px 15px;
+            font-size: 1em;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            overflow: hidden; /* Agar item di dalamnya ikut melengkung */
+        }
+        .dropdown-content a, .dropdown-content button {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Roboto', sans-serif;
+        }
+        .dropdown-content a:hover, .dropdown-content button:hover { background-color: #f1f1f1; }
+        .show { display: block; }
+
+        .container{padding:40px;max-width:1200px;margin:auto;}.container h1{color:var(--dark-gray);margin-bottom:30px;}.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px;}.product-card{background-color:white;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.08);overflow:hidden;transition:transform .2s,box-shadow .2s;}
+        .product-card.clickable:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.12);cursor: pointer;}
+        .product-card img{width:100%;height:200px;object-fit:cover;}.product-info{padding:20px;}.product-info h3{margin-top:0;color:var(--dark-gray);}.product-info p{font-size:1.2em;font-weight:500;color:var(--primary-blue);margin:0;}
+        .product-stock { font-size: 0.9em; font-weight: 400; color: #6c757d; margin-top: 10px; }
+        .swal2-image { border-radius: 8px; margin: 20px auto 0; }
+        .swal2-html-container { text-align: left; margin: 20px 20px 0 20px !important; }
+        .product-detail-info { line-height: 1.6; }
     </style>
 </head>
 <body>
     
     <nav class="navbar">
         <a href="#" class="navbar-brand">Electronicku</a>
+        
         <div class="navbar-user">
-            <span>Halo, <strong>{{ user.username }}</strong>!</span>
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-logout">Logout</button>
-            </form>
+            <div class="dropdown">
+                <button onclick="toggleDropdown()" class="dropdown-btn">
+                    Halo, <strong>{{ user.username }}</strong> &#9662;
+                </button>
+                <div id="userDropdown" class="dropdown-content">
+                    <a href="{% url 'pengaturan' %}">Pengaturan</a>
+                    <form id="logout-form" action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </nav>
 
     <div class="container">
         <h1>Produk Terbaru Kami</h1>
         <div class="product-grid">
+
             {% for product in products %}
-            <div class="product-card">
-                <img src="{% static product.gambar %}" alt="{{ product.nama }}">
+            <div class="product-card clickable" 
+                data-nama="{{ product.nama }}" data-harga="Rp {{ product.harga }}" data-stok="{{ product.stok }}"
+                data-deskripsi="{{ product.deskripsi }}" data-gambar="{% if product.gambar %}{{ product.gambar.url }}{% endif %}">
+                
+                {% if product.gambar %}<img src="{{ product.gambar.url }}" alt="{{ product.nama }}">
+                {% else %}<img src="https://via.placeholder.com/300x200.png?text=No+Image" alt="{{ product.nama }}">{% endif %}
+                
                 <div class="product-info">
-                    <h3>{{ product.nama }}</h3>
-                    <p>{{ product.harga }}</p>
+                    <h3>{{ product.nama }}</h3><p>Rp {{ product.harga }}</p><p class="product-stock">Stok: {{ product.stok }}</p>
                 </div>
             </div>
             {% endfor %}
+
         </div>
     </div>
 
     <script>
-        const logoutForm = document.getElementById('logout-form');
+        // SCRIPT BARU: Untuk Dropdown Menu Pengguna
+        function toggleDropdown() {
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+        // Menutup dropdown jika user meng-klik di luar area dropdown
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
 
+        // Script untuk konfirmasi logout (sekarang menyatu dengan form di dropdown)
+        const logoutForm = document.getElementById('logout-form');
         logoutForm.addEventListener('submit', function(event) {
             event.preventDefault(); 
-
             Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Anda akan keluar dari sesi ini.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#007bff',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, keluar!',
-                cancelButtonText: 'Tidak'
+                title: 'Apakah Anda yakin?', text: "Anda akan keluar dari sesi ini.", icon: 'warning',
+                showCancelButton: true, confirmButtonColor: '#007bff', cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, keluar!', cancelButtonText: 'Tidak'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    this.submit();
-                }
+                if (result.isConfirmed) { this.submit(); }
             })
+        });
+
+        // Script untuk modal detail produk (tidak berubah)
+        const productCards = document.querySelectorAll('.clickable');
+        productCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // ... (kode modal produk tidak perlu diubah) ...
+                const nama = this.dataset.nama; const harga = this.dataset.harga; const stok = this.dataset.stok;
+                const deskripsi = this.dataset.deskripsi; const gambarUrl = this.dataset.gambar;
+                Swal.fire({
+                    title: nama, imageUrl: gambarUrl, imageWidth: 400, imageAlt: nama,
+                    html: `<div class="product-detail-info"><p><strong>Harga:</strong> ${harga}</p><p><strong>Stok:</strong> ${stok} unit</p><hr><p>${deskripsi}</p></div>`,
+                    showCloseButton: true, showCancelButton: true, focusConfirm: false,
+                    confirmButtonText: 'Masukkan Keranjang', cancelButtonText: 'Beli Sekarang!'
+                }).then((result) => {
+                    if (result.isConfirmed) { Swal.fire('Berhasil!', 'Produk ditambahkan ke keranjang. (Fitur Demo)', 'success')
+                    } else if (result.dismiss === Swal.DismissReason.cancel) { Swal.fire('OK!', 'Anda akan diarahkan ke halaman pembayaran. (Fitur Demo)', 'info') }
+                })
+            });
         });
     </script>
 

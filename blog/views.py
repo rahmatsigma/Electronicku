@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import Product
 from django.contrib.auth.decorators import login_required
+
 
 def register(request):
     if request.method == 'POST':
@@ -16,15 +19,21 @@ def register(request):
     return render(request, 'blog/register.html', {'form': form})
 
 @login_required
-def beranda(request):        
-    products = [
-        {'nama': 'iPhone 16 Pro Max', 'harga': 'Rp 12.500.000', 'gambar': 'images/ip16pm.jpg'},
-        {'nama': 'Laptop UltraBook 14"', 'harga': 'Rp 18.750.000', 'gambar': 'images/laptop.jpg'},
-        {'nama': 'Smartwatch Series 8', 'harga': 'Rp 6.200.000', 'gambar': 'images/smartwatch.jpg'},
-        {'nama': 'Headphone Noise-Cancelling', 'harga': 'Rp 4.500.000', 'gambar': 'images/headphone.jpg'},
-        {'nama': '4K QLED TV 55"', 'harga': 'Rp 15.000.000', 'gambar': 'images/tv.jpg'},
-        {'nama': 'Gaming Console Gen 5', 'harga': 'Rp 9.800.000', 'gambar': 'images/console.jpg'},
-    ]
-    
+def beranda(request):
+    products = Product.objects.all().order_by('-id')    
     konteks = {'products': products}
     return render(request, 'blog/beranda.html', konteks)
+
+@login_required
+def pengaturan(request):
+    if request.method == 'POST':        
+        form = UserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profil berhasil diperbarui!')
+            return redirect('pengaturan') 
+    else:        
+        form = UserChangeForm(instance=request.user)
+    
+    konteks = {'form': form}
+    return render(request, 'blog/pengaturan.html', konteks)
